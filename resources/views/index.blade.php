@@ -57,6 +57,12 @@
 		<hr />
 
 		<div class="form-group">
+			<p>
+				<input type="checkbox" id="show_http_errors" ng-model="request.options.show_http_errors" value="true" /><label for="show_http_errors">Show HTTP Errors</label>
+			</p>
+		</div>
+
+		<div class="form-group">
 		
 			<p>Method:</p>
 			<select class="form-control" ng-model="request.method">
@@ -137,6 +143,7 @@ app.controller("HttpController", [ '$scope', '$http', function ($scope, $http) {
 	// 					'url' : 'http://bayshore.grape.loancirrus.com:92/api/v1/clients/4471/loans',
 	// 					'auth_type' : 'token',
 	// 					'auth_token' : 'qtjJrpcnoskomQx0I62BXZuJcTwhkW6GGXzV6ecDS3V6Y1Zo9aFcShTOnfWN' 
+						options : {}
 					};
 
 	$scope.normal = false;

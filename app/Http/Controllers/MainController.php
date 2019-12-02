@@ -17,7 +17,7 @@ class MainController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->http_endpoint = 'http://localhost:7007';
+        $this->http_endpoint = env('HTTP_API_ENDPOINT', 'http://localhost:7007');
     }
 
     public function index(Request $R) {
@@ -77,6 +77,10 @@ class MainController extends Controller
 
         $request = SavedRequest::where('user_id', $user_id)->find( $id );
 
+        if ( $request ) {
+            $request->options = json_decode( $request->options ?? '{}' );
+        }
+
         return response()->json( $request );
 
     }
@@ -85,7 +89,13 @@ class MainController extends Controller
         
         $user_id = Auth::user()->id;
 
-        $requests = SavedRequest::where('user_id', $user_id)->get();
+        $requests = SavedRequest::where('user_id', $user_id)->get()->each(
+            function ( $request ) {
+            
+                $request->options = json_decode( $request->options ?? '{}' );
+
+            }
+        );
 
         return response()->json( $requests );
 
@@ -99,6 +109,7 @@ class MainController extends Controller
 
         $record = [];
         $record['url'] = $request['url'];
+        $record['options'] = json_encode( $request['options'] ?? [] );
         $record['method'] = $request['method'] ?? 'GET';
         $record['user_id'] = $user_id;
         $record['hash'] = SavedRequest::generateHash( $record );
@@ -128,6 +139,10 @@ class MainController extends Controller
             $request = SavedRequest::create( $record );
 
         }
+
+        $request->options = json_decode( $request->options );
+
+        // return $request->options;
 
         return response()->json( $request );
 
