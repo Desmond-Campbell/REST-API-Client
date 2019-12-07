@@ -51,6 +51,7 @@
 		<div class="form-group">
 			<button class="btn btn-success" ng-click="send(request)">Send</button>
 			&nbsp; <button class="btn btn-primary" ng-click="save(request)">Save</button>
+			&nbsp; <button class="btn btn-deafult" ng-click="saveAs(request)">Save As</button>
 			&nbsp; <button class="btn btn-warning" ng-click="clear(request)">Clear</button>
 		</div>
 
@@ -115,8 +116,8 @@
 
 		<div class="form-group">
 			<button class="btn btn-success" ng-click="send(request)">Send</button>
-			&nbsp; <button class="btn btn-primary" ng-click="save(request)">Save</button>
-			&nbsp; <button class="btn btn-warning" ng-click="clear(request)">Clear</button>
+			&nbsp; <button class="btn btn-primary" ng-click="save()">Save</button>
+			&nbsp; <button class="btn btn-warning" ng-click="clear()">Clear</button>
 		</div>
 
 	</div>
@@ -195,6 +196,11 @@ app.controller("HttpController", [ '$scope', '$http', function ($scope, $http) {
 
 	$scope.loadSavedRequest();
 
+	$scope.saveAs = function () {
+		$scope.copy = true;
+		$scope.save();
+	};
+
 	$scope.save = function() {
 		
 		id = jQuery('#requestid').val();
@@ -203,7 +209,14 @@ app.controller("HttpController", [ '$scope', '$http', function ($scope, $http) {
 
 		$scope.status = 'Saving request';
 
-		$http.post(url, { request: $scope.request }).success(
+		$payload = { request: $scope.request };
+
+		if ( $scope.copy ) {
+			$scope.copy = false;
+			$payload.copy = true;
+		}
+
+		$http.post(url, $payload).success(
 			function(response){
 				$scope.request = response;
 				$scope.status = 'Request saved';

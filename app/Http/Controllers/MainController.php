@@ -123,7 +123,8 @@ class MainController extends Controller
         $record['headers'] = $request['headers'] ?? '';
         $record['tags'] = $request['tags'] ?? '';
 
-        $entry = SavedRequest::where('user_id', $user_id)->find( $id );
+        if ( $R->input( 'copy') ) { $entry = null; }
+        else { $entry = SavedRequest::where('user_id', $user_id)->find( $id ); }
 
         if ( $entry ) {
 
