@@ -61,7 +61,7 @@ class MainController extends Controller
 
         if ( json_decode( $result ) ?? null ) {
 
-            $result = json_decode( $result );
+            $result = [ 'format' => 'json', 'result' => json_decode( $result ) ];
 
         }
 

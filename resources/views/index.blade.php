@@ -124,7 +124,9 @@
 
 	<div ng-class="{ 'col-md-7' : normal, 'col-md-6' : expanded }">
 		<div id="result" style="max-height: 90%; overflow-y: auto">
-			<pre id="json_result">@{{result}}</pre>
+			<pre id="json_result" style="display: none">JSON @{{result}}</pre>
+			<pre id="text_result" style="display: none">TEXT @{{result}}</pre>
+			<div id="html_result" style="display: none">HTML @{{result}}</div>
 		</div>
 	</div>
 
@@ -231,6 +233,16 @@ app.controller("HttpController", [ '$scope', '$http', function ($scope, $http) {
 
 	};
 
+	$scope.clearDisplayFor = function ( target ) {
+
+		jQuery("#json_result").fadeOut('fast');
+		jQuery("#html_result").fadeOut('fast');
+		jQuery("#text_result").fadeOut('fast');
+
+		jQuery('#' + target + "_result").fadeIn('fast');
+
+	};
+
 	$scope.send = function (request) {
 
 		url = '/request/send';
@@ -239,8 +251,50 @@ app.controller("HttpController", [ '$scope', '$http', function ($scope, $http) {
 
 		$http.post(url, { request : request }).success(
 			function(response){
-				$scope.result = response;
-				document.getElementById("json_result").innerHTML = JSON.stringify(response, undefined, 2);
+
+				var hasResult = false;
+
+				if ( typeof response.format !== 'undefined' ) {
+
+					$scope.result = response.result;
+
+					if ( response.format == 'json' ) {
+
+						document.getElementById("json_result").innerHTML = JSON.stringify(response.result, undefined, 2);
+						$scope.clearDisplayFor('json');
+
+						hasResult = true;
+
+					} else if ( response.format == 'html' ) {
+
+						document.getElementById("html_result").innerHTML = $scope.result;
+						$scope.clearDisplayFor('html');
+
+						hasResult = true;
+
+					} else if ( response.format == 'text' ) {
+
+						document.getElementById("text_result").innerText = $scope.result;
+						$scope.clearDisplayFor('text');
+
+						hasResult = true;
+
+					}
+
+				} else {
+				
+					$scope.result = response;
+
+				}
+
+				if ( !hasResult ) {
+
+					$scope.clearDisplayFor('html');
+					document.getElementById("html_result").innerHTML = $scope.result;
+					hasResult = true;
+
+				}
+
 				$scope.status = 'Request completed';
 			}
 		).error(
