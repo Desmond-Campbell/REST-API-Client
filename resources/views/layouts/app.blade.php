@@ -29,28 +29,44 @@
             word-wrap: break-word;       /* Internet Explorer 5.5+ */
         }
 
+        .request-list {
+            margin-left: -40px;
+        }
+
+        .request-list, .request-list li {
+            list-style-type: none;
+            list-style: none;
+        }
+
+        .request-list li {
+            padding: 5px;
+            border-bottom: solid 1px #DDD;
+        }
+
+        .request-list li:last-child {
+            border: none;
+        }
+
     </style>
 
 </head>
 <body ng-app="rest">
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
+        <nav class="navbar navbar-default navbar-expand-md navbar-dark">
+            <div class="container-fluid">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto">
+                    <ul class="nav navbar-nav">
 
                     </ul>
 
+                    {{--
                     <!-- Right Side Of Navbar -->
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="nav navbar-nav">
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
@@ -80,7 +96,8 @@
                                 </div>
                             </li>
                         @endguest
-                    </ul>
+                    </ul> 
+                    --}}
                 </div>
             </div>
         </nav>

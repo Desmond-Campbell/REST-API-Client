@@ -2,15 +2,17 @@
 
 @section('content')
 
-<div class="row" ng-controller="HttpController">
+<div class="row container" ng-controller="HttpController">
 
 	<div class="col-md-12">
-		<a href="" ng-click="switchMode()"><span ng-if="expanded">Hide</span><span ng-if="normal">Show</span> Sidebar</a> 
+		<button class="btn btn-sm btn-default" ng-click="switchMode()"><span ng-if="expanded">Hide</span><span ng-if="normal">Show</span> Sidebar</a> 
 		<span>@{{ status }}</span>
 	</div>
 
+	<hr />
+
 	<div ng-class="{ 'hidden' : normal, 'col-md-2' : expanded }">
-		<ul>
+		<ul class="request-list">
 			<li ng-repeat="savedRequest in savedRequests">
 				<a href="/r/@{{ savedRequest.hash }}">@{{savedRequest.title}}</a>
 			</li>
