@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
-use App\SavedRequest;
+use App\{SavedRequest, Setting};
 use Auth;
 
 class MainController extends Controller
@@ -53,15 +53,49 @@ class MainController extends Controller
 
         $response = $client->request( 'POST', '/request/send', $args );
 
-        $result = $response->getBody();
+        $result = (string) $response->getBody()->read(10240000);
 
-        while (!$result->eof()) {
-            echo $result->read(1024);
-        }
+        /*while (!$result->eof()) {
+            $result->read(1024);
+        }*/
+
+        ob_clean();
 
         if ( json_decode( $result ) ?? null ) {
 
             $result = [ 'format' => 'json', 'result' => json_decode( $result ) ];
+
+        } else {
+
+            if ( Setting::get('extract_html_body_from_response') ) {
+
+                if ( stristr( $result, '<body' ) ) {
+
+                    preg_match_all( "/\<body([^>]*)>(.*)<\/body>/siU", $result, $m );
+
+                    $result = $m[2][0];
+
+                    if ( Setting::get('strip_laravel_error_header') ) {
+
+                        if ( stristr( $result, '<div class="exception-illustration hidden-xs-down"' ) ) {
+
+                            preg_match_all( "/\<div class=\"exception-illustration hidden-xs-down\"(.*)\<\/div\>/siU", $result, $n );
+
+                            $div = $n[0][0] ?? null; 
+
+                            if ( $div ) {
+
+                                $result = str_replace( $div, '', $result );
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            }
 
         }
 
